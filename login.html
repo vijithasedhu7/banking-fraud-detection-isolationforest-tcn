@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🏦 Bank Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family: Arial; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 50px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); width: 90%; max-width: 400px; }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        input:focus { outline: none; border-color: #1a73e8; }
+        button { width: 100%; padding: 15px; background: #1a73e8; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; font-weight: 600; }
+        button:hover { background: #1557b0; }
+        .alert { padding: 15px; margin: 20px 0; border-radius: 10px; }
+        .alert-success { background: #d4edda; color: #155724; }
+        .alert-error { background: #f8d7da; color: #721c24; }
+        .demo { text-align: center; margin-top: 20px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h1>🏦 Bank Login</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <input name="username" placeholder="👤 Username" required>
+            <input type="password" name="password" placeholder="🔐 Password" required>
+            <button>🔐 LOGIN</button>
+        </form>
+        <div class="demo">
+            
+            <a href="/register" style="color: #1a73e8;">📝 Register New Account</a>
+        </div>
+    </div>
+</body>
+</html>

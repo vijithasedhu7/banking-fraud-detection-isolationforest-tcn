@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔐 OTP Verification - Fraud Detected</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .otp-container { 
+            background: white; 
+            padding: 50px; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
+            max-width: 500px; 
+            width: 90%; 
+            text-align: center; 
+        }
+        .warning-icon { 
+            font-size: 80px; 
+            color: #dc3545; 
+            margin-bottom: 20px; 
+        }
+        h1 { color: #333; margin-bottom: 20px; }
+        .tx-details { 
+            background: #fff3cd; 
+            padding: 25px; 
+            border-radius: 15px; 
+            margin: 25px 0; 
+            border-left: 6px solid #ffc107; 
+        }
+        .tx-details h3 { color: #856404; margin-bottom: 15px; }
+        .detail-row { display: flex; justify-content: space-between; margin: 10px 0; font-size: 16px; }
+        .otp-input { 
+            width: 250px; 
+            padding: 25px; 
+            font-size: 32px; 
+            text-align: center; 
+            border: 3px solid #ddd; 
+            border-radius: 15px; 
+            margin: 20px 0; 
+            letter-spacing: 12px; 
+            font-family: monospace; 
+        }
+        .otp-input:focus { 
+            outline: none; 
+            border-color: #28a745; 
+            box-shadow: 0 0 15px rgba(40,167,69,0.3); 
+        }
+        .verify-btn { 
+            background: linear-gradient(135deg, #28a745, #20c997); 
+            color: white; 
+            border: none; 
+            padding: 20px 40px; 
+            font-size: 20px; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            width: 100%; 
+            margin: 15px 0; 
+        }
+        .verify-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px rgba(40,167,69,0.3); 
+        }
+        .timer { 
+            background: #dc3545; 
+            color: white; 
+            padding: 15px; 
+            border-radius: 10px; 
+            font-size: 24px; 
+            font-weight: bold; 
+            margin: 15px 0; 
+        }
+        .cancel-btn { 
+            background: #6c757d; 
+            color: white; 
+            border: none; 
+            padding: 12px 30px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            font-weight: 500; 
+            display: inline-block; 
+            margin-top: 20px; 
+        }
+        .alert { 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin: 20px 0; 
+            font-weight: bold; 
+        }
+        .alert-error { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; }
+        .alert-warning { background: #fff3cd; color: #856404; border: 2px solid #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="otp-container">
+        <div class="warning-icon">🚨</div>
+        <h1>High-Risk Transaction Detected!</h1>
+        <p>Enter OTP sent to your phone to verify:</p>
+
+        <!-- Flash Messages - HIDE OTP NUMBERS -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if '123456' not in message and 'OTP' not in message %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- 🔥 ADMIN VERIFICATION MESSAGE (Always shown) -->
+        <div class="alert alert-warning" style="margin: 20px 0;">
+        <strong>🔐 ADMIN VERIFICATION REQUIRED</strong><br>
+        <small>Enter 6-digit approval code received by bank administrator</small>
+    </div>
+
+        
+
+
+
+
+        
+        <!-- Transaction Details -->
+        <!-- CORRECT -->
+        {% set pending = session.get('pending_tx', {}) %}
+
+        <div class="tx-details">
+            <h3>Transaction to Verify:</h3>
+            <div class="detail-row">
+                <span>💰 Amount:</span>
+                <strong>₹{{ "%.0f"|format(pending.amount|default(0)) }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>📍 Location:</span>
+                <span>{{ pending.location|default('Unknown') }}</span>
+            </div>
+            <div class="detail-row">
+                <span>💻 Device:</span>
+                <span>{{ pending.device|default('Unknown') }}</span>
+            </div>
+        </div>
+        
+        <!-- OTP Form -->
+        <form method="POST">
+            <input type="text" name="otp" class="otp-input" 
+                   placeholder="Enter 6-digit OTP" maxlength="6" 
+                   pattern="[0-9]{6}" autofocus required>
+            <div class="timer">⏱️ OTP expires in 5 minutes</div>
+            <button type="submit" class="verify-btn">✅ VERIFY & APPROVE</button>
+        </form>
+        
+        <a href="{{ url_for('user_dashboard') }}" class="cancel-btn">❌ Cancel Transaction</a>
+        <p style="margin-top: 30px; font-size: 14px; color: #666;">
+            Didn't receive SMS? <strong>Check spam folder</strong> or contact support.
+        </p>
+    </div>
+</body>
+</html>
